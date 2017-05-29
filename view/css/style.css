@@ -1,0 +1,15 @@
+*{
+	margin:0;
+	padding: 0;
+}
+.hidden{
+	display: none;
+}
+.nav{
+	position:relative;
+	top:0vh;
+	left: 0vw;
+}
+.nav-item{
+	display: inline-block;
+}
