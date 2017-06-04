@@ -10,13 +10,16 @@
 	<body>
 		<div id='nav-bar'>
 			<ul class='nav'>
-				<li class='nav-item'><a id='home' href='#'>Home</a></li>
-				<li class='nav-item'><a id='login' href='#'>Login</a></li>
-				<li class='nav-item'><a id='signup' href='#'>Signup</a></li>
-				<li class='nav-item' id='about'><a id='about' href='#'>About</a></li>
+				<li class='nav-item'><a id='home' class='ablock' href='#'>Home</a></li>
+				<li class='nav-item'><a id='login' class='ablock' href='#'>Login</a></li>
+				<li class='nav-item'><a id='signup' class='ablock' href='#'>Signup</a></li>
+				<li class='nav-item' id='about'><a id='about' class='ablock' href='#'>About</a></li>
 			<ul> 
 		</div>
-		<div id='div-home'></div>
+		<div id='div-home'>
+            <h1>Node CMS</h1>
+            <p>This is a simple Content Management System (CMS) written for Node JS. <br> It can take a picture, a title, and a message, and present them in a pleasing form.<br>  type a username into the the URL to see the content that user has made.</p>
+        </div>
 		<div id='div-login' class='hidden'>
 			<form method='post' action='/login'>
 				<input type='text' name='uname' placeholder='Username'><br>
@@ -44,6 +47,6 @@
 			<span id='author'>Author: Zachary MacKeil</span>
 			<a href='github.com/MacKeil' class='footer-link'>Visit My Github</a>
 		</div>
-		<script src='/js/script.js'></script>
+		<script src='js/script.js'></script>
 	</body>
 </html>

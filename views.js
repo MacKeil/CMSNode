@@ -19,10 +19,10 @@ views.pictures = function(picLoc, count){
 };
 
 views.addContent = function(username){
-	var output = "<form action='/addContent' method='post' enctype='multipart/form-data' class='hidden'>\n<input type='text' name='title' placeholder='Title'>";
+	var output = "<form action='/addContent' method='post' enctype='multipart/form-data' id='form'>\n<input id='title' type='text' name='title' placeholder='Title'>";
 	output += "<br>\n<input type='textarea' name='message' placeholder='Type your message here!' id='msg'><br>\n";
-	output += "<input type='hidden' name='username' value="+username+">\n";
-	output += "\n<input type='file' name='newPic'><br>\n<input type='submit' value='Add Content'>\n</form>\n";
+	output += "<input type='hidden' id='usr' name='username' value="+username+">\n";
+	output += "\n<input type='file' name='newPic' id='file'><br>\n<input type='submit' id='sub' value='Add Content'>\n</form>\n";
 	return output;
 };
 
@@ -49,7 +49,9 @@ views.userContent = function(username){
 	return output;
 };
 
-views.article = function(title, msg, pic){
-	var output = "<div class='article'><img src='"+pic+"' class='art-img'><h3>"+title+"</h3><p>"+msg+"</p></div>";
+views.article = function(title, msg){
+	var output = "<div class='article'>";
+    if(arguments.length > 2) output +="<img src='"+arguments[2]+"' class='art-img'>";
+    output += "<h3>"+title+"</h3><p>"+msg+"</p></div>";
 	return output;
 };

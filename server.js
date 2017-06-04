@@ -18,16 +18,16 @@ var server = http.createServer(function(q,s){
 	}
 	if(q.method === 'POST'){
 		postRoute(q,s);
-	}//TODO: write function for post capabilities
+	}
 }).listen(8080);
 console.log('Server running on 127.0.0.1 port 8080');
 
-function createSession(response, key){
+function createSession(response, key){//aka the only time we use crypto
 	var hash = crypto.createHash('sha256');
 	hash.update(key);
 	var sessId = hash.digest('hex');
 	sessId = sessId.toString();
-	response.setHeader('Set-Cookie', 'session='+sessId);
+	response.setHeader('Set-Cookie', ['session='+sessId, 'expires='+new Date(new Date().getTime()+86409000)]);
 	return sessId;
 }
 
@@ -73,7 +73,12 @@ function route(q,s){
 					s.writeHead(200, {'Content-Type':'text/html'});
 					s.write(views.userContent(item.username));
 					for(var i = item.posts.length; i < item.posts.length; i--){
-						s.write(views.article(item.posts[i].title, item.posts[i].message, item.posts[i].picLoc));
+                                      if(item.posts[i].picLoc != undefined){
+                                       s.write(views.article(item.posts[i].title, item.posts[i].message, item.posts[i].picLoc));
+                                      }
+                                      else{
+                                       s.write(views.article(item.posts[i].title, item.posts[i].message));
+                                      }
 					}
 					s.end(views.footerDash);
 				}
@@ -155,9 +160,16 @@ function postRoute(q,s){
 		var form = new formidable.IncomingForm();
 		form.uploadDir = __dirname + '/pic/';
 		form.parse(q, function(err,fields, files){
+            if(files.size > 0){
 			MongoClient.connect(mUrl, function(err,db){
 				db.collection('users').update({'username': fields.username}, {$push: {'posts':{'title':fields.title, 'message':fields.message, 'picLoc':'pic/'+files.name}}});
-			});	
+            });
+            }
+            else{
+                MongoClient.connect(mUrl, function(err,db){
+                    db.collection('users').update({'username': fields.username}, {$push: {'posts':{'title':fields.title, 'message':fields.message}}});
+                });
+            }
 		});
 	}
 	if(q.url === '/settings'){
