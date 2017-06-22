@@ -2,25 +2,26 @@
 <html>
 	<head>
 		<title>CMSNode: a project on content management.</title>
-		<link href='/css/style.css' rel='stylesheet' type='text/css'>
-		<link href=''>
+		<link href='css/style.css' rel='stylesheet' type='text/css'>
+		<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 		<meta name='author' content='Zachary MacKeil'>
 		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	</head>
 	<body>
-		<div id='nav-bar'>
-			<ul class='nav'>
+		<div id='container'>
+			<ul class='nav nav-pills'>
 				<li class='nav-item'><a id='home' class='ablock' href='#'>Home</a></li>
 				<li class='nav-item'><a id='login' class='ablock' href='#'>Login</a></li>
 				<li class='nav-item'><a id='signup' class='ablock' href='#'>Signup</a></li>
 				<li class='nav-item' id='about'><a id='about' class='ablock' href='#'>About</a></li>
 			<ul> 
 		</div>
-		<div id='div-home'>
-            <h1>Node CMS</h1>
-            <p>This is a simple Content Management System (CMS) written for Node JS. <br> It can take a picture, a title, and a message, and present them in a pleasing form.<br>  type a username into the the URL to see the content that user has made.</p>
+		<div id='div-home' class='theme-color jumbotron container'>
+            <h1 id='homeTitle'>Node CMS</h1>
+            <p id='homePara'>This is a simple Content Management System (CMS) written for Node JS. <br> It can take a picture, a title, and a message, and present them in a pleasing form.<br><br>Type a username into the the URL to see the content that user has made.</p>
         </div>
-		<div id='div-login' class='hidden'>
+		<div id='div-login' class='hidden jumbotron container theme-color'>
+            <p>Login here:</p>
 			<form method='post' action='/login'>
 				<input type='text' name='uname' placeholder='Username'><br>
 				<input type='password' name='pwd' placeholder='Password'><br>
@@ -28,7 +29,8 @@
 				<input type='reset'>
 			</form>
 		</div>
-		<div id='div-signup' class='hidden'>
+		<div id='div-signup' class='hidden jumbotron container theme-color'>
+            <p>Enter your information to signup for this supreme CMS</p>
 			<form action='/signup' method='post'>
 				<input type='text' name='usrname' placeholder='Username'><br>
 				<input type='password' name='pwd1' placeholder='Password'><br>
@@ -39,8 +41,8 @@
 				<input type='reset'>
 			</form>
 		</div>
-		<div id='div-about' class='hidden'>
-			<h3>about</h3><br>
+		<div id='div-about' class='hidden jumbotron container theme-color'>
+            <h3><b>About</b></h3><br>
 			<p>This is a simple Content Management System (CMS) coded in Node.js.<br>Written partly to showcase of my capabilities.</p>
 		</div>
 		<div class='footer'>

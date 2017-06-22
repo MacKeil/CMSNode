@@ -6,6 +6,7 @@ module.exports = views;
 views.dashboard = function(username){
 	var output = "<!Doctype html>\n<html>\n<head>\n<link href='css/dash.css' rel='stylesheet' type='text/css'>\n";
 	output += "<title>"+username+"'s Dashboard!</title>\n<meta name='author' content='Zachary MacKeil'>\n";
+    output += "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>\n";
 	output += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n</head>\n<body>\n";
         output += "<div class='nav'><h4 id='usrname'>"+username+"\n</h4>\n<ul id='nav-menu'>\n<li class='nav-item'>";
         output += "<a id='add' href='#'>Add Content</a></li>\n<li class='nav-item'><a id='settings'>Settings</a></li>\n";

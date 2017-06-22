@@ -1,6 +1,6 @@
 function roundRobin (clicked, old){
-	clicked.classList.add("hidden");
-	old.classList.remove('hidden');
+	old.classList.add("hidden");
+	clicked.classList.remove("hidden");
 
 }
 
@@ -10,7 +10,7 @@ function sessionCookie(){
 	if('session' in assoc){
 		var xhp = new XMLHttpRequest();
 		xhp.open('POST', '/session', true);
-		xhp.send('session='+assoc['session']);
+		xhp.send('session=' + assoc['session']);
 	}
 }
 
