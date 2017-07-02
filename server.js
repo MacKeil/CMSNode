@@ -12,106 +12,122 @@ var http = require('http'),
 	mUrl = "mongodb://localhost:27017/CMSNode",
 	formidable = require('formidable'),
 	crypto = require('crypto');
+//create the server  I always use q and s...because minimalism
 var server = http.createServer(function(q,s){
 	if(q.method === 'GET'){
+		//abstraction ftw
 		route(q,s);
 	}
 	if(q.method === 'POST'){
+		//more abstraction
 		postRoute(q,s);
 	}
-}).listen(8080);
-console.log('Server running on 127.0.0.1 port 8080');
+}).listen(8080);//run on port 8080 for testing, and because we don't have a production level program yet 
+console.log('Server running on 127.0.0.1 port 8080');//let the admin know we are currently running
 
 function createSession(response, key){//aka the only time we use crypto
+	//create a hash using sha256
 	var hash = crypto.createHash('sha256');
+	//use the key provided to hash against
 	hash.update(key);
+	//put our new hash string into a variable
 	var sessId = hash.digest('hex');
+	//make it a string
 	sessId = sessId.toString();
+	//now we make a cookie to hold our session Id
 	response.setHeader('Set-Cookie', ['session='+sessId, 'expires='+new Date(new Date().getTime()+86409000)]);
+	//let the script know what the session Id was
 	return sessId;
 }
 
-//TODO: run a check for url having a username
-//if valid username in url -> display all 
-//content from that user.
+
+//a function to run all GET requests
 function route(q,s){
+	//base case
 	if(q.url === "/"){
+		//send the index file
 		fs.readFile(__dirname + '/view/index.html', function(err, data){
-			if(err) console.log(err);
-			s.writeHead(200, {'Content-Type': 'text/html'});
-			s.end(data);
+			if(err) console.log(err);//errors will be reported to the admin
+			s.writeHead(200, {'Content-Type': 'text/html'});//tell 'em what you got
+			s.end(data);//actually send the html
 		});
 	}
 	if(q.url.indexOf('.html') != -1){
+		//implemented in case of any need for static html pages
 		fs.readFile(__dirname + '/view/' + q.url, function(err, data){
-			if(err) console.log(err);
-			s.writeHead(200, {'Content-Type':'text/html'});
-			s.end(data);
+			if(err) console.log(err);//once again we report errors to the admin
+			s.writeHead(200, {'Content-Type':'text/html'});//responsible web citizenry
+			s.end(data);//send the file
 		});
 	}
 	if(q.url.indexOf('.css') != -1){
+		//send the css file/files requested
 		fs.readFile(__dirname + '/view/' + q.url, function(err, data){
-			if(err) console.log(err);
-			s.writeHead(200, {'Content-Type':'text/css'});
-			s.end(data);
+			if(err) console.log(err);//report errors admin
+			s.writeHead(200, {'Content-Type':'text/css'});//give them a heads up
+			s.end(data);//send the css
 		});
 	}
 	if(q.url.indexOf('.js') != -1){
+		//send out the javascript files requested
 		fs.readFile(__dirname + '/view/' + q.url, function(err, data){
-			if(err) console.log(err);
-			s.writeHead(200, {'Content-Type':'text/javascript'});
-			s.end(data);
+			if(err) console.log(err);//error reported to admin
+			s.writeHead(200, {'Content-Type':'text/javascript'});//head out for a header
+			s.end(data);//send the actual javascript...client side this time
 		});
 	}
 	else{
+		//make a variable to hold our username
 		var qUsr = q.url.substring(1, q.url.length);
+		//connect to the databse
 		MongoClient.connect(mUrl, function(err, db){
-			if(err) console.log(err);
-			var query = {'username': qUsr};
-			db.collection('users').findOne(query, function(err,item){
-				if(item != null){
-					s.writeHead(200, {'Content-Type':'text/html'});
-					s.write(views.userContent(item.username));
-					for(var i = item.posts.length; i < item.posts.length; i--){
-                                      if(item.posts[i].picLoc != undefined){
-                                       s.write(views.article(item.posts[i].title, item.posts[i].message, item.posts[i].picLoc));
+			if(err) console.log(err);//error report to admin
+			var query = {'username': qUsr};//make our query for the databse
+			db.collection('users').findOne(query, function(err,item){//query the database
+				if(item != null){//if there is a user with that name
+					s.writeHead(200, {'Content-Type':'text/html'});//start sending the html for this user
+					s.write(views.userContent(item.username));//send the head and start the html
+					for(var i = item.posts.length; i < item.posts.length; i--){//create a loop for the users content
+                                      if(item.posts[i].picLoc != undefined){//if there is a piclocation
+                                       s.write(views.article(item.posts[i].title, item.posts[i].message, item.posts[i].picLoc));//send it with the picture
                                       }
-                                      else{
-                                       s.write(views.article(item.posts[i].title, item.posts[i].message));
+                                      else{//no piclocation
+                                       s.write(views.article(item.posts[i].title, item.posts[i].message));//send just the post
                                       }
 					}
-					s.end(views.footerDash);
+					s.end(views.footerDash);//end it with the universal footer
 				}
 			});
 		});
 	}
 }
-//TODO implement form handling, login, signup, and new content.
-//all database functions will be run through here.
+//function for handling POST requests
+//almost all database functions will be run through here.
 function postRoute(q,s){
+	//a sacrificial lamb for our code
 	var data = '';
-	if(q.url === "/session"){
-		q.on('data', function(chunk){
+	if(q.url === "/session"){//session cookie handling 
+		q.on('data', function(chunk){//get the data
 			data += chunk;
 		});
-		q.on('end', function(){
-			var sess = toAssoc(data);
-			MongoClient.connect(mUrl, function(err, db){
-				if(err) s.end(err);
+		q.on('end', function(){//when the data is updated
+			var sess = toAssoc(data);//create an associative array to hold the data
+			MongoClient.connect(mUrl, function(err, db){//check if the cookie holds a valid id
+				if(err) s.end(err);//send errors to the admin
 				db.collection('users').findOne({'session':sess['session']}, function(err, item){
-					if(item != null){
-						createSession(s, item.username);
-						s.writeHead(200, {'Content-Type':'text/html'});
-						s.write(views.dashboard(item.username));
-						s.write(views.addContent(item.username));
-						s.end(views.footerDash);
+					if(item != null){//if the session id exists in the database
+						createSession(s, item.username);//make sure the user has a fresh cookie
+						s.writeHead(200, {'Content-Type':'text/html'});//more web citizenry
+						s.write(views.dashboard(item.username));//auto login
+						s.write(views.addContent(item.username));//let'em add some content
+						s.end(views.footerDash);//universal footer
 					}
 				});
 			});
 		});
 	}
-	if(q.url === '/login'){
-		q.on('data', function(chunk){
+	if(q.url === '/login'){//handle a login request
+		q.on('data', function(chunk){//get the data
 			data += chunk;
 		});
 		q.on('end', function(){
@@ -171,6 +187,11 @@ function postRoute(q,s){
                 });
             }
 		});
+	}
+	if(q.url === '/users'){//handle the ajax request for users
+		MongoClient.connect(mUrl, function(err,db){
+				db.collection('users').find();
+				});
 	}
 	if(q.url === '/settings'){
 		//TODO come up with some settings for the user

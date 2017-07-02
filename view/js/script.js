@@ -1,7 +1,6 @@
 function roundRobin (clicked, old){
 	old.classList.add("hidden");
 	clicked.classList.remove("hidden");
-
 }
 
 function sessionCookie(){
@@ -24,6 +23,20 @@ function keyValue(string){
 	return assocArr;
 }
 
+function getUsers(){
+	var usersD = document.getElementById("div-users");
+	var xmlhttp = new XMLHttppRequest();
+	xmlhttp.onreadystatechange = function(){
+		if(this.readyState == 4 && this.status == 200){
+			var part = this.responseText.split(',');
+			part.foreach(function(e){
+					usersD.innerHTML += "<a href='"+window.location.href+"/"+e+"'>"+e+"</a> <br>"; 
+					});
+		}
+	};
+	xmlhttp.open("POST", "/users", true);
+	xmlhttp.send();	
+}
 
 window.onload = function () {
 	var current = document.getElementById('div-home');
@@ -31,10 +44,12 @@ window.onload = function () {
 	var loginDiv = document.getElementById('div-login');
 	var signupDiv = document.getElementById('div-signup');
 	var aboutDiv = document.getElementById('div-about');
+	var usersDiv = document.getElementById('div-users');
 	var home = document.getElementById('home');
 	var login = document.getElementById('login');
 	var signup = document.getElementById('signup');
 	var about = document.getElementById('about');
+	var users = document.getElementById('users');
 	home.addEventListener("click", function(e){
 		e.preventDefault();
 		roundRobin(homeDiv, current);
@@ -55,6 +70,12 @@ window.onload = function () {
 		roundRobin(aboutDiv, current);
 		current = aboutDiv;
 	});
+	users.addEventListener("click", function(e){
+		e.preventDefault();
+		roundRobin(usersDiv, current);
+		current = usersDiv;
+		getUsers();
+			});
 	sessionCookie();
 
 };
