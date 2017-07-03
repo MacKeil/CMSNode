@@ -189,8 +189,25 @@ function postRoute(q,s){
 		});
 	}
 	if(q.url === '/users'){//handle the ajax request for users
-		MongoClient.connect(mUrl, function(err,db){
-				db.collection('users').find();
+		var out = ''; //create a string to hold the data
+		MongoClient.connect(mUrl, function(err,db){ //connect to the database
+				var cursor = db.collection('users').find({},{"usrname" : true});//make a cursor that holds the data
+				cursor.count(function(err, num){ //get the number of returned documents
+						if(err) console.log(err); //if there is an error report it to the admin
+						for(var i = 0; i < num; i++){
+							cursor.nextObject(function(err, doc){
+									if(err) console.log(err);//if there's an error let the admin know
+									if(doc != null){ //redundant check for going past the count
+										out += doc.username;
+										if(i < num - 1){
+											out += ",";
+										}
+									}
+									});
+						}
+						s.writeHead(200, {'Content-Type' : "text"});//make sure the header lets the browser know what it's sending
+						s.end(out); //send the completed datastring
+						});				
 				});
 	}
 	if(q.url === '/settings'){
